@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import { db } from "@/firebase/firebase";
 import { ref, get, child } from "firebase/database";
 
+type AttendanceRecord = {
+  name: string;
+  timestamp: number;
+  userAgent: string;
+};
+
 export default function AdminPage() {
-  const [records, setRecords] = useState([]);
+  const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,8 +21,8 @@ export default function AdminPage() {
           const data = snapshot.val();
           const list = Object.entries(data).map(([name, value]) => ({
             name,
-            ...(value as object)
-          }));
+            ...(value as object),
+          })) as AttendanceRecord[];
           setRecords(list);
         } else {
           setRecords([]);
@@ -51,4 +57,14 @@ export default function AdminPage() {
               <tr key={idx} className="border-b">
                 <td className="border p-2">{rec.name}</td>
                 <td className="border p-2">
-                  {
+                  {new Date(rec.timestamp).toLocaleString()}
+                </td>
+                <td className="border p-2 text-sm">{rec.userAgent}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
