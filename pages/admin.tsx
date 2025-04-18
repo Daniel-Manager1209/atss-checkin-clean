@@ -13,7 +13,10 @@ export default function AdminPage() {
         const snapshot = await get(child(ref(db), `attendance/${today}`));
         if (snapshot.exists()) {
           const data = snapshot.val();
-          const list = Object.entries(data).map(([name, value]) => ({ name, ...value }));
+          const list = Object.entries(data).map(([name, value]) => ({
+            name,
+            ...(value as object)
+          }));
           setRecords(list);
         } else {
           setRecords([]);
@@ -47,13 +50,5 @@ export default function AdminPage() {
             {records.map((rec, idx) => (
               <tr key={idx} className="border-b">
                 <td className="border p-2">{rec.name}</td>
-                <td className="border p-2">{new Date(rec.timestamp).toLocaleString()}</td>
-                <td className="border p-2 text-sm">{rec.userAgent}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
-  );
-}
+                <td className="border p-2">
+                  {
